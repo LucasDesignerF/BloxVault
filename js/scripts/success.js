@@ -1,4 +1,3 @@
-// js/scripts/success.js
 document.addEventListener("DOMContentLoaded", async function() {
     // Pegar o parâmetro 'username' da URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -12,28 +11,21 @@ document.addEventListener("DOMContentLoaded", async function() {
     document.getElementById('username').textContent = username;
 
     try {
-        // Buscar o ID do usuário pelo username usando a API do Roblox
-        const userResponse = await fetch(`https://users.roblox.com/v1/users/search?keyword=${username}&limit=1`);
-        const userData = await userResponse.json();
+        // Fazer a requisição à Cloudflare Function
+        const response = await fetch(`/functions/roblox?username=${encodeURIComponent(username)}`);
+        const data = await response.json();
 
-        if (userData.data.length === 0) {
-            document.getElementById('username').textContent = "Usuário não encontrado";
-            return;
+        if (!response.ok) {
+            throw new Error(data.error || 'Erro desconhecido');
         }
 
-        const userId = userData.data[0].id;
+        const { userId, avatarUrl } = data;
+
         document.getElementById('userId').textContent = userId;
 
-        // Buscar o avatar headshot
-        const avatarResponse = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
-        const avatarData = await avatarResponse.json();
-
-        if (avatarData.data.length > 0) {
-            const avatarUrl = avatarData.data[0].imageUrl;
-            const avatarImg = document.getElementById('avatar');
-            avatarImg.src = avatarUrl;
-            avatarImg.style.display = 'block';
-        }
+        const avatarImg = document.getElementById('avatar');
+        avatarImg.src = avatarUrl;
+        avatarImg.style.display = 'block';
     } catch (error) {
         console.error("Erro ao buscar dados do Roblox:", error);
         document.getElementById('username').textContent = "Erro ao carregar dados";
