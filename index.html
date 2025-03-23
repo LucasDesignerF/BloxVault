@@ -33,7 +33,6 @@
         .bg-medium-gray { background-color: #21212c; }
         .text-light-gray { color: #CCCCCC; }
 
-
         /* Animação de pulso lento para o fundo */
         .animate-pulse-slow {
             animation: pulse 8s infinite ease-in-out;
@@ -96,7 +95,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             max-width: 90%;
             margin: 0 auto 2rem auto;
-
         }
 
         /* Estilo moderno para botões */
@@ -111,7 +109,6 @@
         .modern-btn:hover {
             background: linear-gradient(90deg, #26262E, #33333B);
             transform: translateY(-2px);
-
         }
 
         /* Header Layout */
@@ -185,7 +182,7 @@
             }
             .modern-btn.hidden {
                 display: block;
-                margin: 0 auto; /* Centraliza o botão em mobile */
+                margin: 0 auto;
             }
             .hero-bg {
                 padding-top: 10rem;
@@ -265,7 +262,7 @@
                     <p class="text-light-gray mb-4">Ideal para começar sua aventura no Roblox!</p>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-red-roblox">R$ 14,90</span>
-                        <button class="modern-btn">Comprar Agora</button>
+                        <button class="modern-btn" onclick="redirectToLogin('Pacote 25k Robux')">Comprar Agora</button>
                     </div>
                 </div>
 
@@ -276,7 +273,7 @@
                     <p class="text-light-gray mb-4">Quanto mais Robux, melhor!</p>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-red-roblox">R$ 22,90</span>
-                        <button class="modern-btn">Comprar Agora</button>
+                        <button class="modern-btn" onclick="redirectToLogin('Pacote 50k Robux')">Comprar Agora</button>
                     </div>
                 </div>
 
@@ -287,7 +284,7 @@
                     <p class="text-light-gray mb-4">Nunca mais fique sem!</p>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-red-roblox">R$ 69,90</span>
-                        <button class="modern-btn">Comprar Agora</button>
+                        <button class="modern-btn" onclick="redirectToLogin('Método Infinity')">Comprar Agora</button>
                     </div>
                 </div>
             </div>
@@ -316,7 +313,7 @@
     <script src="js/scripts/index.js"></script>
     <script src="js/utils/helpers.js"></script>
 
-    <!-- Script para URL Dinâmica e Menu Hamburguer -->
+    <!-- Script para URL Dinâmica, Menu Hambúrguer e Redirecionamento -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const currentUrl = window.location.href;
@@ -332,6 +329,15 @@
                 });
             }
         });
+
+        function redirectToLogin(product) {
+            if (!localStorage.getItem("authToken")) {
+                localStorage.setItem("redirectAfterLogin", `cart.html?product=${encodeURIComponent(product)}`);
+                window.location.href = "login.html";
+            } else {
+                window.location.href = `cart.html?product=${encodeURIComponent(product)}`;
+            }
+        }
     </script>
 </body>
 </html>
