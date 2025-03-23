@@ -121,15 +121,15 @@
             }
 
             // Validar token no Worker
-            const response = await fetch("https://api-bloxvault.ofc-rede.workers.dev/verify-token", {
+            const verifyResponse = await fetch("https://api-bloxvault.ofc-rede.workers.dev/verify-token", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token })
             });
-            const data = await response.json();
+            const verifyData = await verifyResponse.json();
 
-            if (!response.ok) {
-                cartError.textContent = data.error || "Erro ao validar sessão. Faça login novamente.";
+            if (!verifyResponse.ok) {
+                cartError.textContent = verifyData.error || "Erro ao validar sessão. Faça login novamente.";
                 cartError.classList.remove("hidden");
                 localStorage.removeItem("authToken");
                 setTimeout(() => window.location.href = "login.html", 2000);
@@ -146,15 +146,34 @@
                 "Pacote 50k Robux": "R$ 22,90",
                 "Método Infinity": "R$ 69,90"
             };
-            document.getElementById("productPrice").textContent = prices[product] || "Preço Indisponível";
-            document.getElementById("username").textContent = data.username;
+            const price = prices[product] || "Preço Indisponível";
+            document.getElementById("productPrice").textContent = price;
+            document.getElementById("username").textContent = verifyData.username;
 
             // Habilitar botão de finalização
             finalizeBtn.disabled = false;
-            finalizeBtn.addEventListener("click", function() {
-                // Placeholder para finalização (ex.: redirecionar para Discord)
+            finalizeBtn.addEventListener("click", async function() {
+                // Criar pedido no Worker
+                const orderResponse = await fetch("https://api-bloxvault.ofc-rede.workers.dev/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        token: token,
+                        product: product,
+                        price: price
+                    })
+                });
+                const orderData = await orderResponse.json();
+
+                if (!orderResponse.ok) {
+                    cartError.textContent = orderData.error || "Erro ao registrar o pedido. Tente novamente.";
+                    cartError.classList.remove("hidden");
+                    return;
+                }
+
+                // Sucesso: exibir mensagem e redirecionar para o Discord
+                alert(`Compra registrada! Pedido #${orderData.order_id}. Você será redirecionado ao Discord para finalizar.`);
                 const discordLink = "https://discord.gg/pG9DjgXKSE"; // Substitua pelo seu link
-                alert("Compra registrada! Você será redirecionado ao Discord para finalizar.");
                 window.location.href = discordLink;
             });
         });
