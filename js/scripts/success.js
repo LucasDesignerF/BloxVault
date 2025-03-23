@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async function() {
-    // Pegar o parâmetro 'username' da URL
     const urlParams = new URLSearchParams(window.location.search);
     const username = urlParams.get('username');
 
@@ -11,8 +10,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     document.getElementById('username').textContent = username;
 
     try {
-        // Fazer a requisição à Cloudflare Function
-        const response = await fetch(`/functions/roblox?username=${encodeURIComponent(username)}`);
+        const workerUrl = `https://api-bloxvault.ofc-rede.workers.dev?username=${encodeURIComponent(username)}`;
+        const response = await fetch(workerUrl);
         const data = await response.json();
 
         if (!response.ok) {
@@ -22,7 +21,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         const { userId, avatarUrl } = data;
 
         document.getElementById('userId').textContent = userId;
-
         const avatarImg = document.getElementById('avatar');
         avatarImg.src = avatarUrl;
         avatarImg.style.display = 'block';
@@ -31,7 +29,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         document.getElementById('username').textContent = "Erro ao carregar dados";
     }
 
-    // Atualizar a URL do Open Graph dinamicamente
     const currentUrl = window.location.href;
     document.querySelector('meta[property="og:url"]').setAttribute("content", currentUrl);
 });
