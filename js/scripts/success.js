@@ -18,12 +18,22 @@ document.addEventListener("DOMContentLoaded", async function() {
             throw new Error(data.error || 'Erro desconhecido');
         }
 
-        const { userId, avatarUrl } = data;
+        // Atualizar elementos HTML com os dados retornados
+        document.getElementById('userId').textContent = data.userId || 'N/A';
+        document.getElementById('displayName').textContent = data.displayName || 'N/A';
+        document.getElementById('description').textContent = data.description || 'Sem descrição';
+        document.getElementById('created').textContent = data.created ? new Date(data.created).toLocaleDateString() : 'N/A';
+        document.getElementById('isBanned').textContent = data.isBanned ? 'Sim' : 'Não';
+        if (data.avatarUrl && document.getElementById('avatar')) {
+            const avatarImg = document.getElementById('avatar');
+            avatarImg.src = data.avatarUrl;
+            avatarImg.style.display = 'block';
+        }
+        document.getElementById('lastLocation').textContent = data.lastLocation || 'Desconhecido';
+        document.getElementById('onlineStatus').textContent = data.onlineStatus !== null ? (data.onlineStatus === 1 ? 'Online' : 'Offline') : 'N/A';
+        document.getElementById('friendsCount').textContent = data.friendsCount || 0;
+        document.getElementById('followersCount').textContent = data.followersCount || 0;
 
-        document.getElementById('userId').textContent = userId;
-        const avatarImg = document.getElementById('avatar');
-        avatarImg.src = avatarUrl;
-        avatarImg.style.display = 'block';
     } catch (error) {
         console.error("Erro ao buscar dados do Roblox:", error);
         document.getElementById('username').textContent = "Erro ao carregar dados";
